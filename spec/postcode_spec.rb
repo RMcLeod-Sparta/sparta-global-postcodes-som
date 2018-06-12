@@ -1,36 +1,36 @@
-git require 'spec_helper'
+require 'spec_helper'
 
 describe Postcodesio do
 
   context 'requesting information on a single postcode works correctly' do
 
     before(:all) do
-      @postcodesio = Postcodesio.new
-      @response = @postcodesio.get_single_postcode('se96rj')
+      @single_service = Postcodesio.new.single_postcode_service
+      @single_service.get_single_postcode( RandomPostcodeGenerator.new.get_rand_postcode )
     end
 
     it "should respond with a status message of 200" do
-      expect(@response['status']).to eq 200
+      expect(@single_service.get_response_code).to eq 200
     end
 
     it "should have a results hash" do
-      expect(@response['result']).to be_kind_of(Hash)
+      expect(@single_service.get_result).to be_kind_of(Hash)
     end
 
     it "should return a postcode between 5-7 in length"  do
-      expect(@response['result']['postcode'].gsub(' ','').length).to be_between(5,7)
+      expect(@single_service.get_postcode_length).to be_between(5,7)
     end
 
     it "should return an quality key integer between 1-9" do
-      expect(@response['result']['quality']).to be_kind_of(Integer)
-      expect(@response['result']['quality']).to be_between(1,9)
+      expect(@single_service.get_quality_key).to be_kind_of(Integer)
+      expect(@single_service.get_quality_key).to be_between(1,9)
     end
 
     it "should return an ordnance survey eastings value as integer" do
-      expect(@response['result']['eastings']).to be_kind_of(Integer)
+      expect(@single_service.get_ordinance_survey_easting).to be_kind_of(Integer)
     end
 
-    it "should return an ordnance survey eastings value as integer" do
+    it "should return an ordnance survey northings value as integer" do
       expect(@response['result']['northings']).to be_kind_of(Integer)
     end
 
